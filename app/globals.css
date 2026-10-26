@@ -1,26 +1,164 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg-page: #fffdf5;
+    --text-primary: #121212;
+    --text-muted: #4a4a4a;
+    --border-main: #000000;
+    --accent-yellow: #ffe600;
+    --accent-cyan: #00f0ff;
+    --accent-coral: #ff5b5b;
+    --accent-mint: #22c55e;
+  }
+
+  .dark {
+    --bg-page: #121212;
+    --text-primary: #ffffff;
+    --text-muted: #b0b0b0;
+    --border-main: #ffffff;
+    --accent-yellow: #ffe600;
+    --accent-cyan: #00f0ff;
+    --accent-coral: #ff5b5b;
+    --accent-mint: #22c55e;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* Custom focus indicator for keyboard accessibility (R-32) */
+  :focus-visible {
+    outline: 3px solid #000000;
+    outline-offset: 3px;
+  }
+
+  .dark :focus-visible {
+    outline: 3px solid #ffe600;
+    outline-offset: 3px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Neo-brutalist tactile shadows and borders */
+.brutal-border {
+  border: 3px solid #000000;
+}
+
+.dark .brutal-border {
+  border: 3px solid #ffffff;
+}
+
+.brutal-border-sm {
+  border: 2px solid #000000;
+}
+
+.dark .brutal-border-sm {
+  border: 2px solid #ffffff;
+}
+
+.brutal-shadow {
+  box-shadow: 4px 4px 0px #000000;
+}
+
+.dark .brutal-shadow {
+  box-shadow: 4px 4px 0px #ffe600;
+}
+
+.brutal-shadow-lg {
+  box-shadow: 7px 7px 0px #000000;
+}
+
+.dark .brutal-shadow-lg {
+  box-shadow: 7px 7px 0px #ffe600;
+}
+
+.brutal-shadow-sm {
+  box-shadow: 2px 2px 0px #000000;
+}
+
+.dark .brutal-shadow-sm {
+  box-shadow: 2px 2px 0px #ffe600;
+}
+
+.brutal-shadow-cyan {
+  box-shadow: 4px 4px 0px #00f0ff;
+}
+
+.brutal-shadow-coral {
+  box-shadow: 4px 4px 0px #ff5b5b;
+}
+
+/* Tactile press button feel */
+.brutal-btn {
+  border: 3px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark .brutal-btn {
+  border: 3px solid #ffffff;
+  box-shadow: 4px 4px 0px #ffe600;
+}
+
+.brutal-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0px #000000;
+}
+
+.dark .brutal-btn:hover {
+  box-shadow: 5px 5px 0px #ffe600;
+}
+
+.brutal-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+.dark .brutal-btn:active {
+  box-shadow: 1px 1px 0px #ffe600;
+}
+
+/* Card hover tactile feedback */
+.brutal-card-hover {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.brutal-card-hover:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #000000;
+}
+
+.dark .brutal-card-hover:hover {
+  box-shadow: 6px 6px 0px #ffe600;
+}
+
+/* Marquee infinite scroll */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 22s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
 }
