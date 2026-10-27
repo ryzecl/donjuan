@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,12 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ferry Noer Hendriawan | Software Developer & Systems",
-  description:
-    "Information Systems student and full-stack developer with practical experience building clean, scalable digital products across Next.js, Laravel, and Flutter.",
+  title: "DONJUAN // COMING SOON",
+  description: "Systems offline. Upgrade in progress.",
   icons: {
     icon: "/favicon.ico",
-    apple: "/apple-icon.png",
   },
 };
 
@@ -31,11 +28,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
-      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col bg-[#FFFDF5] dark:bg-[#121212] text-[#121212] dark:text-white transition-colors duration-150">
-        <ThemeProvider>{children}</ThemeProvider>
+      <body className="min-h-full flex flex-col bg-[#06060c] text-white selection:bg-[#00f0ff] selection:text-black font-sans">
+        {children}
       </body>
     </html>
   );

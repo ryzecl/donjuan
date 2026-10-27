@@ -1,27 +1,247 @@
-import { Navbar } from "@/components/Navbar";
-import { MarqueeBanner } from "@/components/MarqueeBanner";
-import { Hero } from "@/components/Hero";
-import { ProjectsSection } from "@/components/ProjectsSection";
-import { SkillsMatrix } from "@/components/SkillsMatrix";
-import { ExperienceDossier } from "@/components/ExperienceDossier";
-import { ContactStation } from "@/components/ContactStation";
-import { Footer } from "@/components/Footer";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
+const TYPING_PHRASES = [
+  "COMING SOON",
+  "UNDER CONSTRUCTION",
+  "NOT LAUNCHED YET",
+  "COMING SOON",
+];
+
+interface CyberStar {
+  x: number;
+  y: number;
+  size: number;
+  color: string;
+  twinkleSpeed: number;
+  twinklePhase: number;
+  alpha: number;
+}
 
 export default function Home() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // Typing effect state
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [displayText, setDisplayText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [typingSpeed, setTypingSpeed] = useState(120);
+
+  // Canvas starfield animation
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    const handleResize = () => {
+      if (!canvas) return;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      initStars();
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    const colors = ["#00f0ff", "#ff007f", "#ffe600", "#7928ca", "#ffffff"];
+    let stars: CyberStar[] = [];
+
+    const initStars = () => {
+      stars = [];
+      const count = Math.floor((width * height) / 8000);
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          size: Math.random() * 2 + 0.8,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          twinkleSpeed: Math.random() * 0.05 + 0.015,
+          twinklePhase: Math.random() * Math.PI * 2,
+          alpha: Math.random(),
+        });
+      }
+    };
+
+    initStars();
+
+    const render = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      // Render blinking / twinkling cyber particles
+      for (const star of stars) {
+        star.twinklePhase += star.twinkleSpeed;
+        const currentAlpha = 0.2 + (Math.sin(star.twinklePhase) + 1) * 0.4;
+
+        ctx.save();
+        ctx.fillStyle = star.color;
+        ctx.globalAlpha = Math.min(1, Math.max(0.05, currentAlpha));
+
+        // Add soft neon bloom for larger stars
+        if (star.size > 1.8) {
+          ctx.shadowColor = star.color;
+          ctx.shadowBlur = 8;
+        }
+
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
+  // Text typing effect loop focused on coming soon clarity
+  useEffect(() => {
+    const currentPhrase = TYPING_PHRASES[phraseIndex];
+
+    const timer = setTimeout(() => {
+      if (!isDeleting) {
+        // Typing forward
+        setDisplayText(currentPhrase.substring(0, displayText.length + 1));
+
+        if (displayText.length + 1 === currentPhrase.length) {
+          // Pause longer on completed word so people easily read it
+          setTypingSpeed(2400);
+          setIsDeleting(true);
+        } else {
+          setTypingSpeed(90 + Math.random() * 40);
+        }
+      } else {
+        // Deleting backwards
+        setDisplayText(currentPhrase.substring(0, displayText.length - 1));
+
+        if (displayText.length === 0) {
+          setIsDeleting(false);
+          setPhraseIndex((prev) => (prev + 1) % TYPING_PHRASES.length);
+          setTypingSpeed(400);
+        } else {
+          setTypingSpeed(45);
+        }
+      }
+    }, typingSpeed);
+
+    return () => clearTimeout(timer);
+  }, [displayText, isDeleting, phraseIndex, typingSpeed]);
+
   return (
-    <div className="min-h-screen flex flex-col justify-between selection:bg-[#FFE600] selection:text-black">
-      <Navbar />
-      <MarqueeBanner />
+    <main className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-[#06060c] px-4 select-none">
+      {/* Background Canvas: Blinking / Twinkling Cyber Stars */}
+      <canvas
+        ref={canvasRef}
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none z-0"
+      />
 
-      <main className="flex-1 w-full flex flex-col">
-        <Hero />
-        <ProjectsSection />
-        <SkillsMatrix />
-        <ExperienceDossier />
-        <ContactStation />
-      </main>
+      {/* Cyber Grid Horizon at bottom */}
+      <div
+        aria-hidden="true"
+        className="absolute bottom-0 left-0 right-0 h-72 cyber-grid pointer-events-none opacity-40 z-0 mask-gradient"
+        style={{
+          maskImage: "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)",
+          WebkitMaskImage: "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)",
+        }}
+      />
 
-      <Footer />
-    </div>
+      {/* CRT Scanline Overlay */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 cyber-scanlines pointer-events-none z-10 opacity-35"
+      />
+
+      {/* Vignette glow shadows */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none z-10"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, transparent 30%, rgba(6, 6, 12, 0.85) 100%)",
+        }}
+      />
+
+      {/* Center Cyberpunk HUD Box */}
+      <div className="relative z-20 w-full max-w-xl mx-auto flex flex-col items-center">
+        {/* Top HUD bar */}
+        <div className="w-full flex items-center justify-between border-b border-[#00f0ff]/30 pb-3 mb-6 text-xs font-mono tracking-widest text-[#00f0ff]/80">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#ff007f]" />
+            <span className="text-[#00f0ff] font-bold">PROJECT STATUS: IN DEVELOPMENT</span>
+          </div>
+          <span className="text-zinc-500">FERRY H.</span>
+        </div>
+
+        {/* Main Box */}
+        <div className="w-full bg-[#0b0b18]/85 backdrop-blur-md border border-[#00f0ff]/40 p-7 sm:p-11 relative neon-border-cyan">
+          {/* Decorative cyberpunk corner accents */}
+          <div className="absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 border-[#ff007f]" />
+          <div className="absolute -top-1 -right-1 w-3 h-3 border-t-2 border-r-2 border-[#00f0ff]" />
+          <div className="absolute -bottom-1 -left-1 w-3 h-3 border-b-2 border-l-2 border-[#ffe600]" />
+          <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 border-[#ff007f]" />
+
+          {/* Tag */}
+          <p className="text-xs uppercase tracking-widest text-[#ffe600] font-mono mb-3 flex items-center gap-2">
+            <span>[ NOTICE: WEBSITE BELUM DILUNCURKAN ]</span>
+          </p>
+
+          {/* Large Typing Text */}
+          <div className="min-h-[72px] sm:min-h-[84px] flex items-center">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white font-mono break-words neon-glow-cyan">
+              {displayText}
+              <span className="inline-block w-[3px] sm:w-[5px] h-8 sm:h-12 ml-2 bg-[#00f0ff] align-middle animate-cursor" />
+            </h1>
+          </div>
+
+          {/* Explicit description: No confusion about loading */}
+          <p className="mt-5 text-sm sm:text-base text-zinc-300 font-mono leading-relaxed">
+            Halaman ini bukan sedang loading, melainkan proyek baru yang masih dalam tahap perancangan dan pengembangan.
+          </p>
+
+          {/* Direct CTA to Portfolio so users have a clear place to go */}
+          <div className="mt-7 pt-6 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
+            <div className="text-xs text-zinc-400 text-center sm:text-left">
+              Ingin melihat karya dan profil saya saat ini?
+            </div>
+            <a
+              href="https://ferryhendriawan.my.id"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto text-center px-4 py-2.5 bg-[#00f0ff]/10 hover:bg-[#00f0ff] text-[#00f0ff] hover:text-black border border-[#00f0ff] text-xs font-bold tracking-wider uppercase transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffe600]"
+            >
+              Lihat Portfolio &rarr;
+            </a>
+          </div>
+        </div>
+
+        {/* Footer Meta / Copyright */}
+        <div className="w-full mt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-mono text-zinc-500">
+          <span className="text-zinc-600">DONJUAN // DEV PREVIEW</span>
+          <p className="text-center sm:text-right">
+            &copy; 2026 Developed by{" "}
+            <a
+              href="https://ferryhendriawan.my.id"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#00f0ff] hover:text-[#ffe600] transition-colors duration-150 underline decoration-[#00f0ff]/40 hover:decoration-[#ffe600] underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f0ff] rounded-xs px-1"
+            >
+              Ferry Hendriawan
+            </a>
+          </p>
+        </div>
+      </div>
+    </main>
   );
 }
