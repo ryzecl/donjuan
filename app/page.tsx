@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import TrollLoader from "./components/TrollLoader";
 
 const TYPING_PHRASES = [
-  "COMING SOON",
-  "UNDER CONSTRUCTION",
-  "NOT LAUNCHED YET",
-  "COMING SOON",
+  "PRANK! WEBNYA BELUM JADI 😜",
+  "KENA TROLL KAN LU 😹",
+  "LAGI MALES NGODING 😝",
+  "PRANK! WEBNYA BELUM JADI 😜",
 ];
 
 interface CyberStar {
@@ -21,6 +22,9 @@ interface CyberStar {
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // Loading & Troll State
+  const [isLoading, setIsLoading] = useState(true);
 
   // Typing effect state
   const [phraseIndex, setPhraseIndex] = useState(0);
@@ -140,6 +144,9 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-[#06060c] px-4 select-none">
+      {/* Troll Loading Screen */}
+      {isLoading && <TrollLoader onFinish={() => setIsLoading(false)} />}
+
       {/* Background Canvas: Blinking / Twinkling Cyber Stars */}
       <canvas
         ref={canvasRef}
@@ -178,10 +185,21 @@ export default function Home() {
         {/* Top HUD bar */}
         <div className="w-full flex items-center justify-between border-b border-[#00f0ff]/30 pb-3 mb-6 text-xs font-mono tracking-widest text-[#00f0ff]/80">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#ff007f]" />
-            <span className="text-[#00f0ff] font-bold">PROJECT STATUS: IN DEVELOPMENT</span>
+            <span className="w-2 h-2 rounded-full bg-[#ff007f] animate-ping" />
+            <span className="text-[#00f0ff] font-bold">STATUS: 100% KENA PRANK 😹</span>
           </div>
-          <span className="text-zinc-500">FERRY H.</span>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsLoading(true)}
+              title="Kena Prank Lagi (Troll Loader)"
+              type="button"
+              className="text-[11px] text-zinc-400 hover:text-[#ffe600] transition-colors cursor-pointer border border-zinc-800 hover:border-[#ffe600] px-2 py-0.5 flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#ffe600]"
+            >
+              <span>😼</span>
+              <span className="hidden sm:inline">Kena Prank Lagi</span>
+            </button>
+            <span className="text-zinc-500">DONJUAN</span>
+          </div>
         </div>
 
         {/* Main Box */}
@@ -194,35 +212,39 @@ export default function Home() {
 
           {/* Tag */}
           <p className="text-xs uppercase tracking-widest text-[#ffe600] font-mono mb-3 flex items-center gap-2">
-            <span>[ NOTICE: WEBSITE BELUM DILUNCURKAN ]</span>
+            <span>[ SYSTEM NOTICE: WEBNYA EMANG BELUM JADI ]</span>
           </p>
 
           {/* Large Typing Text */}
           <div className="min-h-[72px] sm:min-h-[84px] flex items-center">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white font-mono break-words neon-glow-cyan">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white font-mono break-words neon-glow-cyan">
               {displayText}
               <span className="inline-block w-[3px] sm:w-[5px] h-8 sm:h-12 ml-2 bg-[#00f0ff] align-middle animate-cursor" />
             </h1>
           </div>
 
-          {/* Explicit description: No confusion about loading */}
+          {/* Explicit description */}
           <p className="mt-5 text-sm sm:text-base text-zinc-300 font-mono leading-relaxed">
-            Halaman ini bukan sedang loading, melainkan proyek baru yang masih dalam tahap perancangan dan pengembangan.
+            Udah disuruh nungguin loading lama-lama... eh ternyata webnya emang belum dibikin wkwkwk 😜 Balik lagi nanti kalau adminnya udah mood ngoding ya!
           </p>
 
-          {/* Direct CTA to Portfolio so users have a clear place to go */}
+          {/* Share prank button */}
           <div className="mt-7 pt-6 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
             <div className="text-xs text-zinc-400 text-center sm:text-left">
-              Ingin melihat karya dan profil saya saat ini?
+              Kena troll? Kirim ke teman lu biar ikutan kesel:
             </div>
-            <a
-              href="https://ferryhendriawan.my.id"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto text-center px-4 py-2.5 bg-[#00f0ff]/10 hover:bg-[#00f0ff] text-[#00f0ff] hover:text-black border border-[#00f0ff] text-xs font-bold tracking-wider uppercase transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffe600]"
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  navigator.clipboard?.writeText(window.location.href);
+                  alert("Link berhasil disalin! Kirim ke teman lu buat ngetroll 😹");
+                }
+              }}
+              className="w-full sm:w-auto text-center px-4 py-2.5 bg-[#ffe600] hover:bg-[#ff007f] text-black hover:text-white font-black text-xs uppercase tracking-wider transition-all duration-150 border-2 border-black shadow-[3px_3px_0px_#000] cursor-pointer"
             >
-              Lihat Portfolio &rarr;
-            </a>
+              Salin Link Prank 🔗
+            </button>
           </div>
         </div>
 
